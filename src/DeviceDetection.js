@@ -209,14 +209,14 @@ export default class DeviceDetection extends Event{
       this.scriptProcessor.connect(this.audioContext.destination)
 
       // 开始处理音频
-      this.scriptProcessor.onaudioprocess = (e) => {
+      this.scriptProcessor.addEventListener('audioprocess', (e) => {
         // 获得缓冲区的输入音频，转换为包含了PCM通道数据的32位浮点数组
         let buffer = e.inputBuffer.getChannelData(0)
         // 获取缓冲区中最大的音量值
         let maxVal = Math.max.apply(Math, buffer)
         // 显示音量值
         this.emit('volume-change', Math.round(maxVal * 100))
-      }
+      })
     }else{
       this._closeCurrMic()
     }
@@ -240,6 +240,15 @@ export default class DeviceDetection extends Event{
     this.micStream.getAudioTracks().forEach( t => {
       t.stop()
     })
+  }
+  
+  /**
+   * 解除麦克风的占用
+   */
+  releaseMic(){
+    this._closeCurrMic()
+    this.scriptProcessor.disconnect(this.audioContext.destination)
+    this.scriptProcessor.removeEventListener('audioprocess')
   }
 
 }
