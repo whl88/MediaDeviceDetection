@@ -55,3 +55,7 @@ function showVideo(deviceId, width, height){
         reject(e)
     })
 }
+
+document.querySelector('.releaseMic').addEventListener('click', function(){
+    deviceDetection.releaseMic()
+})
